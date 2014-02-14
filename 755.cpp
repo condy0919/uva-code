@@ -77,7 +77,7 @@ int main()
 			cout << "No duplicates." << endl;
 
 		tel.clear();
-		if (total_test != 0)
+		if (total_test)
 			cout << endl;
 	}
 

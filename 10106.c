@@ -31,11 +31,11 @@ void mul(bignum_t* ans, bignum_t* a, bignum_t* b)
 {
 	int i, j;
 
-	memset(ans->val, 0, sizeof(char)*N);
+	memset(ans->val, 0, sizeof(int)*N);
 	for (i = 0; i < a->len; ++i)
 		for (j = 0; j < b->len; ++j)
 			ans->val[i+j] += a->val[i] * b->val[j];
-	for (i = 0; i < a->len+b->len-1; ++i) {
+	for (i = 0; i < a->len + b->len - 1; ++i) {
 		ans->val[i+1] += ans->val[i] / 10;
 		ans->val[i] %= 10;
 	}
