@@ -33,7 +33,7 @@ struct state_t {
 	}
 };
 
-bool vis[201 * 201 * 201];
+bool vis[202 * 202 * 202];
 int lim[3], d;
 
 void bfs()

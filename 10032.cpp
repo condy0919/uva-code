@@ -1,47 +1,49 @@
 #include <iostream>
 #include <algorithm>
-#include <climits>
+#include <numeric>
+#include <cstring>
 
 using namespace std;
 
+int T;
 int n;
-int weight[100];
-int ans[2], _min;
+int w[101];
+int f[51][25000];
 
-void dfs(int cur, int p1, int w1, int p2, int w2)
-{
-	if (cur == n) {
-		if (abs(p1 - p2) <= 1 && abs(w1 - w2) < _min) {
-			_min = abs(w1 - w2);
-			ans[0] = w1, ans[1] = w2;
-		}
-		return;
-	}
-	// prune
-	if (n - cur < abs(p1 - p2) - 1)
-		return;
+int main() {
+    ios::sync_with_stdio(false);
 
-	dfs(cur + 1, p1 + 1, w1 + weight[cur], p2, w2);
-	dfs(cur + 1, p1, w1, p2 + 1, w2 + weight[cur]);
-}
+    cin >> T;
+    while (T-- > 0) {
+        cin >> n;
+        for (int i = 1; i <= n; ++i)
+            cin >> w[i];
+        int S = accumulate(&w[1], &w[n + 1], 0);
+        int C = S / 2;
 
-int main()
-{
-	int test_case;
-
-	cin >> test_case;
-	while (test_case-- > 0) {
-		cin >> n;
-		for (int i = 0; i < n; ++i)
-			cin >> weight[i];
-		_min = INT_MAX;
-		dfs(0, 0, 0, 0, 0);
-		if (ans[0] < ans[1])
-			cout << ans[0] << " " << ans[1] << endl;
-		else
-			cout << ans[1] << " " << ans[0] << endl;
-		if (test_case)
-			cout << endl;
-	}
-	return 0;
+        int ans = -1;
+        int up_bound = (n % 2) ? (n / 2 + 1) : (n  / 2);
+        memset(f, 0, sizeof(f));
+        f[0][0] = true;
+        for (int i = 1; i <= n; ++i)
+            for (int c = C; c >= w[i]; --c)
+                for (int s = 1; s <= up_bound; ++s)
+                    f[s][c] |= f[s - 1][c - w[i]];
+        if (n % 2) {
+            for (int i = C; i >= 0; --i)
+                if (f[n / 2 + 1][i]) {
+                    ans = max(ans, i);
+                    break;
+                }
+        }
+        for (int i = C; i >= 0; --i)
+            if (f[n / 2][i]) {
+                ans = max(ans, i);
+                break;
+            }
+        cout << ans << " " << S - ans << endl;
+        if (T)
+            cout << endl;
+    }
+    return 0;
 }

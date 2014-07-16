@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 
+/*
+ * 基本的dp。
+ */
+
 int len, n, pos[60];
 int cache[60][60];
 
