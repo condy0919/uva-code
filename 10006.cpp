@@ -11,24 +11,45 @@ using namespace std;
 
 int n;
 bool is_prime[65000] = {false};
+int primes[65000 / 10], total = 0;
 #define PRIME false
 #define NOT_PRIME true
 
 void init_prime_table() {
-    for (int i = 4; i < 65000; ++i) {
-        if (i % 2 == 0 || i % 3 == 0)
-            is_prime[i] = NOT_PRIME;
-    }
+    for (int i = 6; i < 65000; i += 3)
+        is_prime[i] = NOT_PRIME;
+    for (int i = 4; i < 65000; i += 2)
+        is_prime[i] = NOT_PRIME;
 
-    for (int i = 6; ; i += 6) {
-        for (int k = 0; k < 2; ++k) {
-            unsigned int m = i + 2 * k - 1;
-            if (m >= 65000)
-                return;
-            if (is_prime[m] == PRIME) {
-                for (unsigned int j = m * m; j < 65000; j += m)
-                    is_prime[j] = NOT_PRIME;
-            }
+    for (unsigned int i = 5, gap = 4; i < 65000; i += (gap ^= 6)) {
+        if (is_prime[i] == PRIME) {
+            for (unsigned int j = i * i; j < 65000; j += i)
+                is_prime[j] = NOT_PRIME;
+        }
+    }
+    //for (int i = 6; ; i += 6) {
+    //    for (int k = 0; k < 2; ++k) {
+    //        unsigned int m = i + 2 * k - 1;
+    //        if (m >= 65000)
+    //            return;
+    //        if (is_prime[m] == PRIME) {
+    //            for (unsigned int j = m * m; j < 65000; j += m)
+    //                is_prime[j] = NOT_PRIME;
+    //        }
+    //    }
+    //}
+}
+
+void linear_sieve() {
+    primes[total++] = 2;
+    primes[total++] = 3;
+    for (int i = 5, gap = 4; i <= 65000; i += (gap ^= 6)) {
+        if (is_prime[i] == PRIME)
+            primes[total++] = i;
+        for (int j = 0; j < total && i * primes[j] <= 65000; ++j) {
+            is_prime[i * primes[j]] = NOT_PRIME;
+            if (i % primes[j] == 0)
+                break;
         }
     }
 }
@@ -55,8 +76,9 @@ int main() {
     ios::sync_with_stdio(false);
 
     init_prime_table();
+    //linear_sieve();
     while (cin >> n && n > 2 && n < 65000) {
-        if (is_prime[n] == NOT_PRIME && fermat_test(n))
+        if (/*!std::binary_search(primes, primes + total, n)*/ is_prime[n] == NOT_PRIME && fermat_test(n))
             cout << "The number " << n << " is a Carmichael number." << endl;
         else
             cout << n << " is normal." << endl;
